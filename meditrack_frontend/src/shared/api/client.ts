@@ -1,8 +1,8 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { AuthTokens } from "../types";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+const apiClient: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL as string,
   withCredentials: true
 });
 
@@ -16,16 +16,16 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 });
 
 apiClient.interceptors.response.use(
-  res => res,
+  response => response,
   async (error: AxiosError) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-    if (error.response?.status === 401 && !original._retry) {
+    if (error.response?.status === 401 && original && !original._retry) {
       original._retry = true;
       try {
         const raw = localStorage.getItem("tokens");
-        if (!raw) throw new Error("No refresh");
+        if (!raw) throw new Error("No refresh token");
         const tokens: AuthTokens = JSON.parse(raw);
-        const refreshRes = await axios.post(
+        const refreshRes = await axios.post<{ access: string }>(
           `${import.meta.env.VITE_API_URL}/auth/refresh/`,
           { refresh: tokens.refresh }
         );

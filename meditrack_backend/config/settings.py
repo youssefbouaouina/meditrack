@@ -9,7 +9,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "change-me")
 DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+
+def _split_env_list(value: str, default: list[str]) -> list[str]:
+    items = [item.strip() for item in value.split(",") if item.strip()]
+    return items if items else default
+
+ALLOWED_HOSTS = _split_env_list(os.getenv("ALLOWED_HOSTS", ""), ["localhost", "127.0.0.1"])
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -102,5 +107,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = _split_env_list(
+    os.getenv("CORS_ALLOWED_ORIGINS", ""),
+    ["http://localhost:5173"],
+)
 CORS_ALLOW_CREDENTIALS = True
+
+OPENFDA_API_KEY = os.getenv("OPENFDA_API_KEY", "")
