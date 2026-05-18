@@ -17,7 +17,7 @@ export const useMarkTaken = (start: string, end: string) => {
       const previous = queryClient.getQueryData<AdherenceLogData>(queryKey);
       if (previous) {
         const updatedLogs = previous.logs.map((log) =>
-          log.id === id ? { ...log, status: "taken", taken_at: new Date().toISOString() } : log
+          log.id === id ? { ...log, status: "taken" as const, taken_at: new Date().toISOString() } : log
         );
         const grouped = updatedLogs.reduce<Record<string, AdherenceLog[]>>((acc, log) => {
           const key = log.scheduled_time.slice(0, 10);
