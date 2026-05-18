@@ -7,8 +7,8 @@
     "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": true,
+    "noEmit": true,
     "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx"
